@@ -1,8 +1,17 @@
 {{- if .Values.ingress.enabled -}}
 {{- $servicePort := .Values.service.port -}}
-{{- $paths := .Values.ingress.paths -}}
-{{- $extraPaths := .Values.ingress.extraPaths -}}
+{{- if and .Values.ingress.ingressClassName (not (semverCompare ">=1.18-0" .Capabilities.KubeVersion.GitVersion)) }}
+  {{- if not (hasKey .Values.ingress.annotations "kubernetes.io/ingress.class") }}
+  {{- $_ := set .Values.ingress.annotations "kubernetes.io/ingress.class" .Values.ingress.ingressClassName}}
+  {{- end }}
+{{- end }}
+{{- if semverCompare ">=1.19-0" .Capabilities.KubeVersion.GitVersion -}}
+apiVersion: networking.k8s.io/v1
+{{- else if semverCompare ">=1.14-0" .Capabilities.KubeVersion.GitVersion -}}
 apiVersion: networking.k8s.io/v1beta1
+{{- else -}}
+apiVersion: extensions/v1beta1
+{{- end }}
 kind: Ingress
 metadata:
   name: mgr-ingress
@@ -15,50 +24,110 @@ metadata:
     {{- toYaml .Values.ingress.labels | nindent 4 }}
     {{- end }}
 spec:
+  {{- if and .Values.ingress.ingressClassName (semverCompare ">=1.18-0" .Capabilities.KubeVersion.GitVersion) }}
+  ingressClassName: {{ .Values.ingress.ingressClassName }}
+  {{- end }}
   rules:
-  {{- if .Values.ingress.hosts }}
-  {{- range $host := .Values.ingress.hosts }}
-  - host: {{ $host }}
-    http:
-      paths:
-        {{- if $extraPaths }}
-        {{- toYaml $extraPaths | nindent 8 }}
-        {{- end }}
-        - path: /api
-          pathType: Prefix
-          backend:
-            serviceName: mgr-service-api
-            servicePort: {{ $servicePort }}
-        - path: /api2
-          pathType: Prefix
-          backend:
-            serviceName: mgr-service-api
-            servicePort: {{ $servicePort }}
-        - path: /api/v3
-          pathType: Prefix
-          backend:
-            serviceName: mgr-service-api
-            servicePort: {{ $servicePort }}
-        - path: /public/integration/webhookcallback2
-          pathType: Prefix
-          backend:
-            serviceName: mgr-service-api
-            servicePort: {{ $servicePort }}
-        - path: /realtime
-          pathType: Prefix
-          backend:
-            serviceName: mgr-service-notification
-            servicePort: {{ $servicePort }}
-        {{- range $p := $paths }}
-        - path: {{ $p }}
-          backend:
-            serviceName: mgr-service
-            servicePort: {{ $servicePort }}
-        {{- end -}}
-  {{- end -}}
-  {{- end -}}
+    {{- range .Values.ingress.hosts }}
+    - host: {{ .host | quote }}
+      http:
+        paths:
+          {{- range .paths }}
+          - path: {{ .path }}
+            {{- if and .pathType (semverCompare ">=1.18-0" $.Capabilities.KubeVersion.GitVersion) }}
+            pathType: {{ .pathType }}
+            {{- end }}
+            backend:
+              {{- if semverCompare ">=1.19-0" $.Capabilities.KubeVersion.GitVersion }}
+              service:
+                name: mgr-service
+                port:
+                  number: {{ $servicePort }}
+              {{- else }}
+              serviceName: mgr-service
+              servicePort: {{ $servicePort }}
+              {{- end }}
+          {{- end }}
+          {{- if semverCompare ">=1.19-0" $.Capabilities.KubeVersion.GitVersion }}
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: mgr-service-api
+                port:
+                  number: {{ $servicePort }}
+          - path: /api2
+            pathType: Prefix
+            backend:
+              service:
+                name: mgr-service-api
+                port:
+                  number: {{ $servicePort }}
+          - path: /api/v3
+            pathType: Prefix
+            backend:
+              service:
+                name: mgr-service-api
+                port:
+                  number: {{ $servicePort }}
+          - path: /public/integration/webhookcallback2
+            pathType: Prefix
+            backend:
+              service:
+                name: mgr-service-api
+                port:
+                  number: {{ $servicePort }}
+          - path: /realtime
+            pathType: Prefix
+            backend:
+              serviceName: mgr-service-notification
+              servicePort: {{ $servicePort }}
+          {{- else }}
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: mgr-service-api
+                port:
+                  number: {{ $servicePort }}
+          - path: /api2
+            pathType: Prefix
+            backend:
+              service:
+                name: mgr-service-api
+                port:
+                  number: {{ $servicePort }}
+          - path: /api/v3
+            pathType: Prefix
+            backend:
+              service:
+                name: mgr-service-api
+                port:
+                  number: {{ $servicePort }}
+          - path: /public/integration/webhookcallback2
+            pathType: Prefix
+            backend:
+              service:
+                name: mgr-service-api
+                port:
+                  number: {{ $servicePort }}
+          - path: /realtime
+            pathType: Prefix
+            backend:
+              service:
+                name: mgr-service-notification
+                port:
+                  number: {{ $servicePort }}
+          {{- end }}
+    {{- end }}
   {{- if .Values.ingress.tls }}
   tls:
-    {{- toYaml .Values.ingress.tls | nindent 4 }}
-  {{- end -}}
+    {{- range .Values.ingress.tls }}
+    - hosts:
+        {{- range .hosts }}
+        - {{ . | quote }}
+        {{- end }}
+      secretName: {{ .secretName }}
+    {{- end }}
+  {{- end }}
 {{- end }}

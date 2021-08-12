@@ -5,8 +5,9 @@ apiVersion: argoproj.io/v1alpha1
 kind: Rollout
 metadata:
   name: mgr-rollout
-  {{- with .Values.annotations }}
   annotations:
+    checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+  {{- with .Values.annotations }}
     {{- toYaml . | nindent 4 }}
   {{- end }}
   labels:
@@ -179,8 +180,9 @@ apiVersion: argoproj.io/v1alpha1
 kind: Rollout
 metadata:
   name: mgr-api-rollout
-  {{- with .Values.annotations }}
   annotations:
+    checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+  {{- with .Values.annotations }}
     {{- toYaml . | nindent 4 }}
   {{- end }}
   labels:
@@ -353,8 +355,9 @@ apiVersion: argoproj.io/v1alpha1
 kind: Rollout
 metadata:
   name: mgr-notification-rollout
-  {{- with .Values.annotations }}
   annotations:
+    checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+  {{- with .Values.annotations }}
     {{- toYaml . | nindent 4 }}
   {{- end }}
   labels:
@@ -527,8 +530,9 @@ apiVersion: argoproj.io/v1alpha1
 kind: Rollout
 metadata:
   name: mgr-poller-rollout
-  {{- with .Values.annotations }}
   annotations:
+    checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+  {{- with .Values.annotations }}
     {{- toYaml . | nindent 4 }}
   {{- end }}
   labels:

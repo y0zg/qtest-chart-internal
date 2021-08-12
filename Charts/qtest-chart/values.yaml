@@ -136,7 +136,11 @@ ingress:
       # canary-by-header: []
       # canary-by-header-pattern: []
   labels: {}
-  hosts: []
+  hosts:
+    - host: chart-example.local
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
   paths:
     - /
   extraPaths:

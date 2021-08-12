@@ -5,8 +5,9 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: mgr-deployment
-  {{- with .Values.annotations }}
   annotations:
+    checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+  {{- with .Values.annotations }}
     {{- toYaml . | nindent 4 }}
   {{- end }}
   labels:
@@ -151,8 +152,9 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: mgr-deployment-poller
-  {{- with .Values.annotations }}
   annotations:
+    checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+  {{- with .Values.annotations }}
     {{- toYaml . | nindent 4 }}
   {{- end }}
   labels:
@@ -256,8 +258,9 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: mgr-deployment-notification
-  {{- with .Values.annotations }}
   annotations:
+    checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+  {{- with .Values.annotations }}
     {{- toYaml . | nindent 4 }}
   {{- end }}
   labels:
@@ -402,8 +405,9 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: mgr-deployment-api
-  {{- with .Values.annotations }}
   annotations:
+    checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+  {{- with .Values.annotations }}
     {{- toYaml . | nindent 4 }}
   {{- end }}
   labels:
