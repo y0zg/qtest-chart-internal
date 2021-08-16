@@ -5,11 +5,14 @@ image:
   pullPolicy: IfNotPresent
   tag: "3.3.4"
 
+annotations: {}
+
 service:
   type: LoadBalancer
   port: 6080
-  targetport: 6080
+  targetPort: 6080
   servicename: qtest-scenario-service
+  annotations: {}
 
 qTestScenario:
   qTestScenarioDBConnection: postgresql://postgres:changeme@postgres.local/scenario
@@ -42,5 +45,8 @@ autoscaling:
   enabled: true
   minReplicas: 2
   maxReplicas: 4
+  healthApiPath: /atlassian-connect.json
+  periodSeconds: 30
+  failureThreshold: 4
   targetCPUUtilizationPercentage: 85
   targetMemoryUtilizationPercentage: 85
