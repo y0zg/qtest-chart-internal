@@ -8,18 +8,68 @@ on:
   workflow_dispatch:
   # Inputs the workflow accepts.
     inputs:
-      helmChartVersion:
-        description: 'Please provide Helm Chart Version'
-        default: '1.0'
-        required: true
-      qtestVersion:
-        description: 'Please provide qtest Manager Version'
-        default: '10.5.2'
-        required: true
       branchName:
         description: 'Please provide branch name that needs to be committed to public repo'
         default: newBranch
         required: true
+      helmqTestVersion:
+        description: 'Please provide Helm Chart Version'
+        default: '1.0'
+        required: true
+      qtestAppVersion:
+        description: 'Please provide qtest Manager Version'
+        default: '10.5.2'
+        required: true
+      helmInsightsVersion:
+        description: 'Please provide Helm Chart Version'
+        default: '1.0'
+        required: true 
+      insightsAppVersion:
+        description: 'Please provide qtest Manager Version'
+        default: '10.5.2'
+        required: true
+      helmLaunchsVersion:
+        description: 'Please provide Helm Chart Version'
+        default: '1.0'
+        required: true 
+      launchAppVersion:
+        description: 'Please provide qtest Manager Version'
+        default: '10.5.2'
+        required: true
+      helmParametersVersion:
+        description: 'Please provide Helm Chart Version'
+        default: '1.0'
+        required: true 
+      parametersAppVersion:
+        description: 'Please provide qtest Manager Version'
+        default: '10.5.2'
+        required: true
+      helmPulseVersion:
+        description: 'Please provide Helm Chart Version'
+        default: '1.0'
+        required: true 
+      pulseAppVersion:
+        description: 'Please provide qtest Manager Version'
+        default: '10.5.2'
+        required: true
+      helmScenarioVersion:
+        description: 'Please provide Helm Chart Version'
+        default: '1.0'
+        required: true 
+      scenarioAppVersion:
+        description: 'Please provide qtest Manager Version'
+        default: '10.5.2'
+        required: true
+      helmSessionVersion:
+        description: 'Please provide Helm Chart Version'
+        default: '1.0'
+        required: true 
+      sessionAppVersion:
+        description: 'Please provide qtest Manager Version'
+        default: '10.5.2'
+        required: true
+      
+      
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -45,4 +95,14 @@ jobs:
           
           chmod 777 *
           chmod 777 ./.github/scripts/pushToPublicRepo.sh
-          ./.github/scripts/pushToPublicRepo.sh $cwd ${{ secrets.USERNAME }} ${{ github.event.inputs.branchName }} ${{ github.event.inputs.helmChartVersion }} ${{ github.event.inputs.qtestVersion }}
+          ./.github/scripts/pushToPublicRepo.sh $cwd ${{ secrets.USERNAME }} ${{ github.event.inputs.branchName }} \ 
+                                                ${{ github.event.inputs.helmqTestVersion }} ${{ github.event.inputs.qtestAppVersion }} \
+                                                ${{ github.event.inputs.helmInsightsVersion }} ${{ github.event.inputs.insightsAppVersion }} \
+                                                ${{ github.event.inputs.helmLaunchsVersion }} ${{ github.event.inputs.launchAppVersion }} \
+                                                ${{ github.event.inputs.helmParametersVersion }} ${{ github.event.inputs.parametersAppVersion }} \
+                                                ${{ github.event.inputs.helmPulseVersion }} ${{ github.event.inputs.pulseAppVersion }} \
+                                                ${{ github.event.inputs.helmScenarioVersion }} ${{ github.event.inputs.scenarioAppVersion }} \
+                                                ${{ github.event.inputs.helmSessionVersion }} ${{ github.event.inputs.sessionAppVersion }} 
+                                                
+                                                
+                                                
