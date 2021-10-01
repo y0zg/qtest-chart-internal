@@ -6,8 +6,6 @@ str2="${str1%.*}.$minorVS"
 echo Update to version $str2
 sed -i "/\"/!s/version:.*/$str2/g" Chart.yaml
 
-# POM_VERSION="10.5.1"
-# COMMIT="06cc314"
 str3="$(grep -w 'appVersion:' Chart.yaml)"
 echo Current appVersion $str3
 # minorVS="${str3##*.}"
