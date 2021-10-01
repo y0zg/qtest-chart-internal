@@ -4,7 +4,7 @@ echo Current version $str1
 minorVS=$((minorVS+1))
 str2="${str1%.*}.$minorVS"
 echo Update to version $str2
-sed -i '' "/\"/!s/version:.*/$str2/g" Chart.yaml
+sed -i "/\"/!s/version:.*/$str2/g" Chart.yaml
 
 # POM_VERSION="10.5.1"
 # COMMIT="06cc314"
@@ -15,4 +15,4 @@ echo Current appVersion $str3
 # minorVS=$((minorVS+1))
 str4="${POM_VERSION}-${COMMIT}"
 echo Update to appVersion $str4
-sed -i '' "s/appVersion:.*/appVersion: \"$str4\"/g" Chart.yaml
+sed -i "s/appVersion:.*/appVersion: \"$str4\"/g" Chart.yaml
